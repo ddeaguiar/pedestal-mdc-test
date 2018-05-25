@@ -19,11 +19,14 @@
                                                           (clojure-version)
                                                           (route/url-for ::about-page)))))))})
 
-;; INFO  io.pedestal.http -  - {:msg "GET /about", :line 80}
-;; INFO  io.pedestal.http.cors -  - {:msg "cors request processing", :origin "", :allowed true, :line 84}
-;; INFO  mdc-test.service - {"name" "Daniel"} - {:msg "foo!", :mdc-context {"name" "Daniel"}, :line 15}
-;; INFO  mdc-test.service - {"name" "Daniel", "last" "De Aguiar"} - {:msg "from go block!", :mdc-context {"name" "Daniel", "last" "De Aguiar"}, :line 17}
-;; INFO  io.pedestal.http.cors - {} - {:msg "cors response processing", :cors-headers {"Access-Control-Allow-Origin" "", "Access-Control-Allow-Credentials" "true", "Access-Control-Expose-Headers" "Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options, X-Xss-Protection, X-Download-Options, X-Permitted-Cross-Domain-Policies, Content-Security-Policy, Content-Type"}, :line 111}
+;; Note how the last io.pedestal.http.cors log entry has an empty map for mdc data
+;; This is what I expected.
+;;
+;; 10:31:24.023 {} [qtp1565895664-946] INFO  io.pedestal.http - {:msg "GET /about", :line 80}
+;; 10:31:24.024 {} [qtp1565895664-946] INFO  io.pedestal.http.cors - {:msg "cors request processing", :origin "", :allowed true, :line 84}
+;; 10:31:24.025 {"name" "Daniel"} [qtp1565895664-946] INFO  mdc-test.service - {:msg "foo!", :mdc-context {"name" "Daniel"}, :line 15}
+;; 10:31:24.026 {"name" "Daniel", "last" "De Aguiar"} [qtp1565895664-946] INFO  mdc-test.service - {:msg "from go block!", :mdc-context {"name" "Daniel", "last" "De Aguiar"}, :line 17}
+;; 10:31:24.027 {} [qtp1565895664-946] INFO  io.pedestal.http.cors - {:msg "cors response processing", :cors-headers {"Access-Control-Allow-Origin" "", "Access-Control-Allow-Credentials" "true", "Access-Control-Expose-Headers" "Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options, X-Xss-Protection, X-Download-Options, X-Permitted-Cross-Domain-Policies, Content-Security-Policy, Content-Type"}, :line 111}
 
 (def about-page2
   {:name ::about-page2
@@ -38,11 +41,13 @@
                                                             (clojure-version)
                                                             (route/url-for ::about-page))))))))})
 
-;; INFO  io.pedestal.http -  - {:msg "GET /about2", :line 80}
-;; INFO  io.pedestal.http.cors -  - {:msg "cors request processing", :origin "", :allowed true, :line 84}
-;; INFO  mdc-test.service - {"name" "Daniel"} - {:msg "foo!", :mdc-context {"name" "Daniel"}, :line 27}
-;; INFO  mdc-test.service - {"name" "Daniel", "last" "De Aguiar"} - {:msg "from go block!", :mdc-context {"name" "Daniel", "last" "De Aguiar"}, :line 30}
-;; INFO  io.pedestal.http.cors - {"name" "Daniel"} - {:msg "cors response processing", :cors-headers {"Access-Control-Allow-Origin" "", "Access-Control-Allow-Credentials" "true", "Access-Control-Expose-Headers" "Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options, X-Xss-Protection, X-Download-Options, X-Permitted-Cross-Domain-Policies, Content-Security-Policy, Content-Type"}, :line 111}
+;; Note how the last io.pedestal.http.cors log entry has a non-empty map for mdc data
+;; This is not what I expected.
+;; 10:30:36.173  [qtp1565895664-945] INFO  io.pedestal.http - {:msg "GET /about2", :line 80}
+;; 10:30:36.174  [qtp1565895664-945] INFO  io.pedestal.http.cors - {:msg "cors request processing", :origin "", :allowed true, :line 84}
+;; 10:30:36.175 {"name" "Daniel"} [qtp1565895664-945] INFO  mdc-test.service - {:msg "foo!", :mdc-context {"name" "Daniel"}, :line 33}
+;; 10:30:36.175 {"name" "Daniel", "last" "De Aguiar"} [async-dispatch-5] INFO  mdc-test.service - {:msg "from go block!", :mdc-context {"name" "Daniel", "last" "De Aguiar"}, :line 36}
+;; 10:30:37.180 {"name" "Daniel"} [async-dispatch-8] INFO  io.pedestal.http.cors - {:msg "cors response processing", :cors-headers {"Access-Control-Allow-Origin" "", "Access-Control-Allow-Credentials" "true", "Access-Control-Expose-Headers" "Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options, X-Xss-Protection, X-Download-Options, X-Permitted-Cross-Domain-Policies, Content-Security-Policy, Content-Type"}, :line 111}
 
 (defn home-page
   [request]
